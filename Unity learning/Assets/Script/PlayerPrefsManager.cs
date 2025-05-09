@@ -149,6 +149,18 @@ public class PlayerPrefsManager : MonoBehaviour
             }
             return list;
         }
+        else if(typeof(IDictionary).IsAssignableFrom(type))
+        {
+            int count = PlayerPrefs.GetInt(keyName, 0);
+            IDictionary dic = Activator.CreateInstance(type) as IDictionary;
+            Type[] kvType = type.GetGenericArguments();
+            for(int i =0; i < count; i++)
+            {
+                dic.Add(LoadValue(kvType[0], keyName + count),
+                        LoadValue(kvType[1], keyName + count));
+            }
+            return dic;
+        }
 
         return null;
     }

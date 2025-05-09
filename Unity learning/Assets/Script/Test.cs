@@ -22,6 +22,9 @@ public class Test : MonoBehaviour
     {
         PlayerInfo info = new PlayerInfo();
         PlayerPrefsManager.Instance.SaveData(info,"Player1");
+        PlayerInfo p = PlayerPrefsManager.Instance.LoadData(typeof(PlayerInfo),"Player1") as PlayerInfo;
+
+
     }
 
     // Update is called once per frame

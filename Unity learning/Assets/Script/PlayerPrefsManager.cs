@@ -104,15 +104,50 @@ public class PlayerPrefsManager : MonoBehaviour
     //使用type减少代码(减少在外部new之后再传入)
     public object LoadData(Type type, string keyName)
     {
-        Type dataType = type;
-        FieldInfo[] fields = dataType.GetFields();
-        for(int i = 0; i< fields.Length; i++)
+        //创建一个对象来存数据
+        object data = Activator.CreateInstance(type) ;
+        FieldInfo[] fields = type.GetFields();
+        FieldInfo field;
+        string loadName = "";
+        for (int i = 0; i< fields.Length; i++)
         {
-            FieldInfo field = fields[i];
-            if(field.FieldType == typeof(string))
-            {
+            field = fields[i] ;
+            //名字要与存储相同
+            loadName = keyName + "_" + type.Name + "_" + field.FieldType.Name + "_" + field.Name;
+            field.SetValue(data, LoadValue(field.FieldType, loadName));
+            
+        }
 
+        return data;
+    }
+    public object LoadValue(Type type, string keyName)
+    {
+        if (type == typeof(int))
+        {
+            return PlayerPrefs.GetInt(keyName, 0);
+        }
+        else if (type == typeof(float))
+        {
+            return PlayerPrefs.GetFloat(keyName, 0);
+        }
+        else if (type == typeof(string))
+        {
+            return PlayerPrefs.GetString(keyName, "");
+        }
+        else if (type == typeof(bool))
+        {
+            return PlayerPrefs.GetInt(keyName, 0) == 1 ? true : false;
+        }
+        else if(typeof(IList).IsAssignableFrom(type))
+        {
+            int count = PlayerPrefs.GetInt(keyName, 0);
+            //实例化一个List对象进行赋值
+            IList list = Activator.CreateInstance(type) as IList;
+            for(int i =0;i < count; i++)
+            {
+                list.Add(LoadValue(type.GetGenericArguments()[0], keyName + i));
             }
+            return list;
         }
 
         return null;

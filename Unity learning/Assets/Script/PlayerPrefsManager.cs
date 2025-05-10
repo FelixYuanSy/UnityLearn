@@ -100,6 +100,10 @@ public class PlayerPrefsManager : MonoBehaviour
                 ++index;
             }
         }
+        else
+        {
+            SaveData(valueType, keyname);
+        }
     }
     //使用type减少代码(减少在外部new之后再传入)
     public object LoadData(Type type, string keyName)
@@ -160,6 +164,10 @@ public class PlayerPrefsManager : MonoBehaviour
                         LoadValue(kvType[1], keyName + count));
             }
             return dic;
+        }
+        else
+        {
+            return LoadData(type, keyName);
         }
 
         return null;
